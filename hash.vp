@@ -2,3 +2,94 @@
 // jan.2021, v0.21.5
 attacker[active]
 // attacker[passive]
+
+//hash
+principal h2[]
+principal h1[
+	knows private t1
+	knows public t2
+	knows password t3
+	
+	h1 =  HASH(G, nil)
+	h11 = HASH(G, nil)
+	h2 =  HASH(nil, G)
+	h22 = HASH(nil, G)
+	h3 =  HASH(t3, t2, t1)
+	h33 = HASH(t3, t2, t1)
+	h4 =  HASH(G^t1, CONCAT(t2, t3))
+	h44 = HASH(G^t1, CONCAT(t2, t3))
+	_ = ASSERT(h1, h11)?
+	_ = ASSERT(h2, h22)?
+	_ = ASSERT(h3, h33)?
+	_ = ASSERT(h4, h44)?
+]
+h1 -> h2: h1, [h11], h2, [h22], h3, [h33], h4, [h44]
+principal h2[
+	knows private t1
+	knows public t2
+	knows password t3
+	
+	h1_ =  HASH(G, nil)
+	h11_ = HASH(G, nil)
+	h2_ =  HASH(nil, G)
+	h22_ = HASH(nil, G)
+	h3_ =  HASH(t3, t2, t1)
+	h33_ = HASH(t3, t2, t1)
+	h4_ =  HASH(G^t1, CONCAT(t2, t3))
+	h44_ = HASH(G^t1, CONCAT(t2, t3))
+	_ = ASSERT(h1, h1_)?
+	_ = ASSERT(h11, h11_)?
+	_ = ASSERT(h2, h2_)?
+	_ = ASSERT(h22, h22_)?
+	_ = ASSERT(h3, h3_)?
+	_ = ASSERT(h33, h33_)?
+	_ = ASSERT(h4, h4_)?
+	_ = ASSERT(h44, h44_)?
+]
+//end
+
+
+//mac
+principal m2[]
+principal m1[
+	knows private key1
+	knows public key2
+	knows private txt1
+	knows private txt2
+
+	m10  = MAC(key1, txt1)
+	m11  = MAC(key1, txt2)
+	m20  = MAC(key2, txt2)
+	m21  = MAC(key2, txt1)
+	k1 = MAC(key1, key1)
+	k2 = MAC(key2, key2)
+	k3 = MAC(txt1, txt1)
+	k4 = MAC(txt2, txt2)
+]
+m1 -> m2: m10, m11, m20, m21, k1, k2, k3, k4
+principal m2[
+	knows private key1
+	knows public key2
+	knows private txt1
+	knows private txt2
+
+	m10_  = MAC(key1, txt1)
+	m11_  = MAC(key1, txt2)
+	m20_  = MAC(key2, txt2)
+	m21_  = MAC(key2, txt1)
+	k1_ = MAC(key1, key1)
+	k2_ = MAC(key2, key2)
+	k3_ = MAC(txt1, txt1)
+	k4_ = MAC(txt2, txt2)
+
+	_ = ASSERT(m10, m10_)?
+	_ = ASSERT(m11, m11_)?
+	_ = ASSERT(m20, m20_)?
+	_ = ASSERT(m21, m21_)?
+	_ = ASSERT(k1, k1_)?
+	_ = ASSERT(k2, k2_)?
+	_ = ASSERT(k3, k3_)?
+	_ = ASSERT(k4, k4_)?
+]
+
+queries[]
