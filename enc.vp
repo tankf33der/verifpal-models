@@ -20,7 +20,7 @@ principal enc1[
 	_ = ASSERT(text1, DEC(key2, e4))?
 ]
 
-enc1 -> enc2: e1, e2, e3, e4
+enc1 -> enc2: e1, e2, e3, [e4]
 principal enc2[
 	knows private key1
 	knows public key2
