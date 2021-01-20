@@ -65,8 +65,9 @@ principal m1[
 	k2 = MAC(key2, key2)
 	k3 = MAC(txt1, txt1)
 	k4 = MAC(txt2, txt2)
+	k5 = MAC(key1, HASH(txt1))
 ]
-m1 -> m2: m10, m11, m20, m21, k1, k2, k3, k4
+m1 -> m2: m10, m11, m20, m21, k1, k2, k3, k4, k5
 principal m2[
 	knows private key1
 	knows public key2
@@ -81,6 +82,7 @@ principal m2[
 	k2_ = MAC(key2, key2)
 	k3_ = MAC(txt1, txt1)
 	k4_ = MAC(txt2, txt2)
+	k5_ = MAC(key1, HASH(txt1))
 
 	_ = ASSERT(m10, m10_)?
 	_ = ASSERT(m11, m11_)?
@@ -90,6 +92,70 @@ principal m2[
 	_ = ASSERT(k2, k2_)?
 	_ = ASSERT(k3, k3_)?
 	_ = ASSERT(k4, k4_)?
+	_ = ASSERT(k5, k5_)? 
 ]
+// end
+
+principal kdf2[]
+principal kdf1[
+	knows private kdf1
+	knows private kdf2
+	knows private kdf3
+
+	kd1, kd2, kd3 = HKDF(kdf1, kdf2, kdf3)
+	kd11, kd22, kd33 = HKDF(kdf1, kdf2, kdf3)
+	kd41 = HKDF(kdf1, kdf2, nil)
+	kd42 = HKDF(kdf1, nil, kd2)
+	kd43 = HKDF(nil, kdf1, kdf2)
+]
+kdf1 -> kdf2: kd1, [kd11], kd2, [kd22], kd3, [kd33]
+kdf1 -> kdf2: kd41, kd42, kd43
+principal kdf2[
+	knows private kdf1
+	knows private kdf2
+	knows private kdf3
+	
+	_ = ASSERT(kd1, kd11)?
+	_ = ASSERT(kd2, kd22)?
+	_ = ASSERT(kd3, kd33)?
+	kd1_, kd2_, kd3_ = HKDF(kdf1, kdf2, kdf3)
+	kd11_, kd22_, kd33_ = HKDF(kdf1, kdf2, kdf3)
+	_ = ASSERT(kd1, kd1_)?
+	_ = ASSERT(kd2, kd2_)?
+	_ = ASSERT(kd3, kd3_)?
+
+	kd41_ = HKDF(kdf1, kdf2, nil)
+	kd42_ = HKDF(kdf1, nil, kd2)
+	kd43_ = HKDF(nil, kdf1, kdf2)
+	_ = ASSERT(kd41, kd41_)?
+	_ = ASSERT(kd42, kd42_)?
+	_ = ASSERT(kd43, kd43_)?
+]
+// end
+
+principal pw2[]
+principal pw1[
+	knows password p1
+	knows password p2
+	knows private p3
+
+	pw1 = PW_HASH(p1, p2, p3)
+	pw2 = PW_HASH(p1, p2, nil)
+	pw3 = PW_HASH(p3, p1, p2, HASH(p3))
+]
+pw1 -> pw2: pw1, pw2, [pw3]
+principal pw2[
+	knows password p1
+	knows password p2
+	knows private p3
+
+	pw1_ = PW_HASH(p1, p2, p3)
+	pw2_ = PW_HASH(p1, p2, nil)
+	pw3_ = PW_HASH(p3, p1, p2, HASH(p3))
+	_ = ASSERT(pw1, pw1_)?
+	_ = ASSERT(pw2, pw2_)?
+	_ = ASSERT(pw3, pw3_)?
+]
+// end
 
 queries[]
