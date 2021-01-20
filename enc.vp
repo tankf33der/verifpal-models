@@ -1,5 +1,37 @@
 attacker[active]
 // attacker[passive]
 
+// enc
+principal enc2[]
+principal enc1[
+	knows private key1
+	knows public key2
+	knows private text1
+	knows public text2
+
+	e1 = ENC(key1, text1)
+	e2 = ENC(key1, text2)
+	e3 = ENC(key2, text2)
+	e4 = ENC(key2, text1)
+
+	_ = ASSERT(text1, DEC(key1, e1))?
+	_ = ASSERT(text2, DEC(key1, e2))?
+	_ = ASSERT(text2, DEC(key2, e3))?
+	_ = ASSERT(text1, DEC(key2, e4))?
+]
+
+enc1 -> enc2: e1, e2, e3, e4
+principal enc2[
+	knows private key1
+	knows public key2
+	knows private text1
+	knows public text2
+
+	_ = ASSERT(text1, DEC(key1, e1))?
+	_ = ASSERT(text2, DEC(key1, e2))?
+	_ = ASSERT(text2, DEC(key2, e3))?
+	_ = ASSERT(text1, DEC(key2, e4))?
+]
+// enc
 
 queries []
