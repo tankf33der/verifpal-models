@@ -1,16 +1,79 @@
 // idea to test all primitives in one file
-// always must pass
+// always must pass for both attackers' types
 // jan.2021, v0.21.5
 attacker[active]
+// attacker[passive]
 
-principal A[
-	knows private key
-	knows private txt
+// equations
+principal DH2[
+	knows private dx1
+	knows private dy1
+]
+principal DH1[
+	knows private dx1
+	knows private dy1
+	gx = G^dx1
+	gy = G^dy1
+	gxy = gx^dy1
+	gyx = gy^dx1
+	_ = ASSERT(gxy, gyx)?
+]
+DH1 -> DH2: gx, [gy], gxy, [gyx]
+principal DH2[
+	gx2 = G^dx1
+	gy2 = G^dy1
+	gxy2 = gx2^dy1
+	gyx2 = gy2^dx1
+	_ = ASSERT(gxy2, gyx2)?
+	_ = ASSERT(gx, gx2)?
+	_ = ASSERT(gy, gy2)?
+	_ = ASSERT(gxy, gxy2)?
+	_ = ASSERT(gyx, gyx2)?
+]
+// end
+
+
+
+// core start, concat-split
+principal a2[knows private a,b,c]
+principal a1[
+	knows private a,b,c
+	k = CONCAT(a,b,c)
+	k2 = CONCAT(a,b,c)
+
+	a1, b1, _ = SPLIT(k)
+	_ = ASSERT(a, a1)?
+	_ = ASSERT(b, b1)?
+	a2, _, c2 = SPLIT(k)
+	_ = ASSERT(a, a2)?
+	_ = ASSERT(c, c2)?
+	_, b3, c3 = SPLIT(k)
+	_ = ASSERT(b, b3)?
+	_ = ASSERT(c, c3)?
+]
+a1->a2: k, [k2]
+principal a2[
+	a1_, b1_, _ = SPLIT(k)
+	_ = ASSERT(a, a1_)?
+	_ = ASSERT(b, b1_)?
+	a2_, _, c2_ = SPLIT(k)
+	_ = ASSERT(a, a2_)?
+	_ = ASSERT(c, c2_)?
+	_, b3_, c3_ = SPLIT(k)
+	_ = ASSERT(b, b3_)?
+	_ = ASSERT(c, c3_)?
+
+	a1__, b1__, _ = SPLIT(k2)
+	_ = ASSERT(a, a1__)?
+	_ = ASSERT(b, b1__)?
+	a2__, _, c2__ = SPLIT(k)
+	_ = ASSERT(a, a2__)?
+	_ = ASSERT(c, c2__)?
+	_, b3__, c3__ = SPLIT(k)
+	_ = ASSERT(b, b3__)?
+	_ = ASSERT(c, c3__)?
 ]
 
-principal B[
-	knows private key
-	knows private txt
-]
 
+// fake
 queries[]
