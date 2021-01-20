@@ -32,8 +32,6 @@ principal DH2[
 ]
 // end
 
-
-
 // core start, concat-split
 principal a2[knows private a,b,c]
 principal a1[
@@ -74,6 +72,10 @@ principal a2[
 	_ = ASSERT(c, c3__)?
 ]
 
+principal prim1[
+	_ = ASSERT(G, G)?
+	_ = ASSERT(nil, nil)?
+]
 
 // fake
 queries[]
