@@ -1,23 +1,28 @@
 attacker[active]
 // attacker[passive]
 
-// enc
+// enc+dec
 principal enc2[]
 principal enc1[
 	knows private key1
 	knows public key2
 	knows private text1
 	knows public text2
+	generates ee1
 
 	e1 = ENC(key1, text1)
 	e2 = ENC(key1, text2)
 	e3 = ENC(key2, text2)
 	e4 = ENC(key2, text1)
+	e5 = ENC(ee1, text1)
+	e6 = ENC(ee1, text2)
 
 	_ = ASSERT(text1, DEC(key1, e1))?
 	_ = ASSERT(text2, DEC(key1, e2))?
 	_ = ASSERT(text2, DEC(key2, e3))?
 	_ = ASSERT(text1, DEC(key2, e4))?
+	_ = ASSERT(text1, DEC(ee1, e5))?
+	_ = ASSERT(text2, DEC(ee1, e6))?
 ]
 
 enc1 -> enc2: e1, e2, e3, [e4]
@@ -27,11 +32,81 @@ principal enc2[
 	knows private text1
 	knows public text2
 
+
 	_ = ASSERT(text1, DEC(key1, e1))?
 	_ = ASSERT(text2, DEC(key1, e2))?
 	_ = ASSERT(text2, DEC(key2, e3))?
 	_ = ASSERT(text1, DEC(key2, e4))?
 ]
-// enc
+// enc+dec
+
+
+// AEAD enc+dec
+principal aa2[]
+principal aa1[
+	knows private key1
+	knows public key2
+	knows private text1
+	knows public text2
+	knows public text3
+	generates ee2
+
+	a1 = AEAD_ENC(key1, text1, nil)
+	a2 = AEAD_ENC(key1, text2, G^ee2)
+	a3 = AEAD_ENC(key2, text2, key2)
+	a4 = AEAD_ENC(key2, text1, key1)
+	a5 = AEAD_ENC(ee2, text1, ee2)
+	a6 = AEAD_ENC(ee2, text2, nil)
+
+	_ = ASSERT(text1, AEAD_DEC(key1, a1, nil))?
+	_ = ASSERT(text2, AEAD_DEC(key1, a2, G^ee2))?
+	_ = ASSERT(text2, AEAD_DEC(key2, a3, key2))?
+	_ = ASSERT(text1, AEAD_DEC(key2, a4, key1))?
+	_ = ASSERT(text1, AEAD_DEC(ee2, a5, ee2))?
+	_ = ASSERT(text2, AEAD_DEC(ee2, a6, nil))?
+]
+
+aa1 -> aa2: a1, a2, a3, [a4], ee2
+
+principal aa2[
+	knows private key1
+	knows public key2
+	knows private text1
+	knows public text2
+
+
+	_ = ASSERT(text1, AEAD_DEC(key1, a1, nil))?
+	_ = ASSERT(text2, AEAD_DEC(key1, a2, G^ee2))?
+	_ = ASSERT(text2, AEAD_DEC(key2, a3, key2))?
+	_ = ASSERT(text1, AEAD_DEC(key2, a4, key1))?
+]
+// AEAD enc+dec
+
+// pke
+principal p2[]
+principal p1[
+	knows private pp
+	knows public p1
+	knows private p2
+
+	kk1 = PKE_ENC(G^pp, p1)
+	kk2 = PKE_ENC(G^pp, p2)
+	_ = ASSERT(p1, PKE_DEC(pp, kk1))?
+	_ = ASSERT(p2, PKE_DEC(pp, kk2))?
+]
+p1 -> p2: kk1, kk2
+principal p2[
+	knows private pp
+	knows public p1
+	knows private p2
+
+	kk1_ = PKE_ENC(G^pp, p1)
+	kk2_ = PKE_ENC(G^pp, p2)
+	_ = ASSERT(kk1_, kk1)?
+	_ = ASSERT(kk2_, kk2)?
+
+	_ = ASSERT(p1, PKE_DEC(pp, kk1))?
+	_ = ASSERT(p2, PKE_DEC(pp, kk2))?
+]
 
 queries []
