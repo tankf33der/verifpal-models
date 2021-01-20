@@ -1,0 +1,4 @@
+// always must pass for both attackers' types
+// jan.2021, v0.21.5
+attacker[active]
+// attacker[passive]
