@@ -1,0 +1,16 @@
+// idea to test all primitives in one file
+// always must pass
+// jan.2021, v0.21.5
+attacker[active]
+
+principal A[
+	knows private key
+	knows private txt
+]
+
+principal B[
+	knows private key
+	knows private txt
+]
+
+queries[]
