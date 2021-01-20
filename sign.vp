@@ -39,7 +39,22 @@ principal r1[
 	_ = RINGSIGNVERIF(G^c, G^b, G^a, t, s1)?
 	_ = RINGSIGNVERIF(G^b, G^c, G^a, t, s1)?
 	_ = RINGSIGNVERIF(G^b, G^a, G^c, t, s1)?
+	_ = RINGSIGNVERIF(G^b, G^b, G^c, t, s1)?
+	_ = RINGSIGNVERIF(G^b, G^a, G^a, t, s1)?
 ]
 // end ring+verif
+
+// blind
+principal b[
+	generates aa
+	generates kk
+	knows private tt
+
+	s100 = SIGN(aa, tt)
+	s200 = UNBLIND(kk, tt, SIGN(aa, BLIND(kk, tt)))
+	_ = ASSERT(s100, s200)?
+	_ = ASSERT(SIGN(aa, tt), UNBLIND(kk, tt, SIGN(aa, BLIND(kk, tt))))?
+]
+// end blind
 
 queries []

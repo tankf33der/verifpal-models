@@ -1,0 +1,33 @@
+attacker[active]
+// attacker[passive]
+
+principal s[
+	knows private e1
+	generates e2
+
+	r1, r2, r3 = SHAMIR_SPLIT(e1)
+	r11, r22, r33 = SHAMIR_SPLIT(e2)
+
+	_ = ASSERT(e1, SHAMIR_JOIN(r1, r2))?
+	_ = ASSERT(e1, SHAMIR_JOIN(r1, r3))?
+	_ = ASSERT(e1, SHAMIR_JOIN(r2, r3))?
+	_ = ASSERT(e1, SHAMIR_JOIN(r2, r1))?
+	_ = ASSERT(e1, SHAMIR_JOIN(r3, r1))?
+	_ = ASSERT(e1, SHAMIR_JOIN(r3, r2))?
+	//
+	_ = ASSERT(e2, SHAMIR_JOIN(r11, r22))?
+	_ = ASSERT(e2, SHAMIR_JOIN(r11, r33))?
+	_ = ASSERT(e2, SHAMIR_JOIN(r22, r33))?
+	_ = ASSERT(e2, SHAMIR_JOIN(r22, r11))?
+	_ = ASSERT(e2, SHAMIR_JOIN(r33, r11))?
+	_ = ASSERT(e2, SHAMIR_JOIN(r33, r22))?
+
+	z1, _, z2 = SHAMIR_SPLIT(e1)
+	z11, z22, _ = SHAMIR_SPLIT(e1)
+	_, z111, z222 = SHAMIR_SPLIT(e1)
+	_ = ASSERT(e1, SHAMIR_JOIN(z1, z2))?
+	_ = ASSERT(e1, SHAMIR_JOIN(z11, z22))?
+	_ = ASSERT(e1, SHAMIR_JOIN(z111, z222))?
+]
+
+queries[]
