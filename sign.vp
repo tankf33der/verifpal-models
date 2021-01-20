@@ -1,0 +1,31 @@
+attacker[active]
+// attacker[passive]
+
+// sign+verif
+principal s2[]
+principal s1[
+	knows private key
+	knows public text1
+	knows private text2
+
+	ss1 = SIGN(key, text1)
+	ss2 = SIGN(key, text2)
+
+	_ = SIGNVERIF(G^key, text1, ss1)?
+	_ = SIGNVERIF(G^key, text2, ss2)?
+	_ = ASSERT(nil, SIGNVERIF(G^key, text1, ss1))?
+	_ = ASSERT(nil, SIGNVERIF(G^key, text2, ss2))?
+]
+s1 -> s2: ss1, [ss2]
+principal s2[
+	knows private key
+	knows public text1
+	knows private text2
+
+	_ = SIGNVERIF(G^key, text1, ss1)?
+	_ = SIGNVERIF(G^key, text2, ss2)?
+]
+// end sign+verif
+
+
+queries []
