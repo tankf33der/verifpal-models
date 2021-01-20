@@ -4,4 +4,4 @@ all:
 	verifpal verify hash.vp 	&& \
 	verifpal verify sign.vp 	&& \
 	verifpal verify sharing.vp 	&& \
-	echo && echo "All ok" && echo
+	echo && echo "ALL OK" && echo
