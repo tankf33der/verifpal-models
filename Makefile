@@ -5,3 +5,5 @@ all:
 	verifpal verify sign.vp 	&& \
 	verifpal verify sharing.vp 	&& \
 	echo && echo "ALL OK" && echo
+p:
+	sed -i 's/active/passive/g' *.vp
