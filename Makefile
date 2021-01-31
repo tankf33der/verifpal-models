@@ -1,4 +1,5 @@
 all:
+	verifpal verify quic.vp 	&& \
 	verifpal verify core.vp 	&& \
 	verifpal verify enc.vp  	&& \
 	verifpal verify hash.vp 	&& \
