@@ -1,0 +1,52 @@
+// J. Zhanget al.: Formal Analysis of QUIC Handshake protocol 
+// using symbolic Model Checking
+// Volume 9, 2021
+
+attacker[active]		// XXX
+
+principal client[
+	generates CHL0
+	knows public c0
+]
+client -> server: [CHL0]
+principal server[
+	generates CertServer
+	generates Token, LPri
+	knows public c0
+	knows private skS
+	pkS = G^skS
+	LPub = G^LPri
+	ssign = SIGN(skS, LPub)
+]
+server -> client: [CertServer], Token, LPub, ssign, [pkS]
+principal client[
+	generates CEPri
+	generates ReqM
+	_ = SIGNVERIF(pkS, LPub, ssign)?
+	CEPub = G^CEPri
+	InitKC = LPub^CEPri
+	e_ReqM = AEAD_ENC(InitKC, ReqM, c0)
+]
+client -> server: CEPub, e_ReqM
+principal server[
+	generates SEPri
+	generates ResM
+	InitKS = CEPub^LPri
+	SEPub = G^SEPri
+	FSKS = CEPub^SEPri
+	e_ReqMx = AEAD_DEC(InitKS, e_ReqM, c0)?
+	e_ResM  = AEAD_ENC(FSKS, ResM, c0)
+	e_SEPub = AEAD_ENC(InitKS, SEPub, c0) 
+]
+server -> client: e_ResM, e_SEPub
+principal client[
+	SEPubs = AEAD_DEC(InitKC, e_SEPub, c0)?
+	FSKC = SEPubs^CEPri
+	_ = AEAD_DEC(FSKC, e_ResM, c0)?
+]
+queries[
+	confidentiality? ResM
+	confidentiality? ReqM
+	authentication? client -> server: e_ReqM
+	authentication? server -> client: e_ResM
+]
