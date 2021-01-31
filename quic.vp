@@ -2,7 +2,7 @@
 // using symbolic Model Checking
 // Volume 9, 2021
 
-attacker[active]		// XXX
+attacker[active]
 
 principal client[
 	generates CHL0
